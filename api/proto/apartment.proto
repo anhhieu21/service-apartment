@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "/pb";
+
+
+
+service ApartmentService {
+    rpc GetApartment (GetApartmentRequest) returns (GetApartmentResponse){}
+    rpc CreateApartment (CreateApartmentRequest) returns (CreateApartmentResponse){}
+    rpc UpdateApartment (UpdateApartmentRequest) returns (UpdateApartmentResponse){}
+    rpc DeleteApartment (DeleteApartmentRequest) returns (DeleteApartmentResponse){}
+}
+service CustomerService {
+    rpc GetCustomer (GetCustomerRequest) returns (GetCustomerResponse){}
+    rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse){}
+    rpc UpdateCustomer (UpdateCustomerRequest) returns (UpdateCustomerResponse){}
+    rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse){}
+}
+message Customer{
+    string id = 1;
+    string name = 2;
+    string phone = 4;
+}
+
+message Apartment {
+    string id = 1;
+    string number = 2;
+}
+
+message GetApartmentRequest {
+    string id = 1;
+}
+message GetApartmentResponse {
+    string id = 1;
+}
+message CreateApartmentRequest {
+    Apartment apartment = 1;
+}
+message CreateApartmentResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+message UpdateApartmentRequest {
+    Apartment apartment = 1;
+}
+message UpdateApartmentResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+message DeleteApartmentRequest {
+    string id = 1;
+}
+message DeleteApartmentResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+
+
+message GetCustomerRequest {
+    string id = 1;
+}
+message GetCustomerResponse {
+    string id = 1;
+}
+message CreateCustomerRequest {
+    Customer apartment = 1;
+}
+message CreateCustomerResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+message UpdateCustomerRequest {
+    Customer apartment = 1;
+}
+message UpdateCustomerResponse {
+    bool success = 1;
+    string error_message = 2;
+}
+message DeleteCustomerRequest {
+    string id = 1;
+}
+message DeleteCustomerResponse {
+    bool success = 1;
+    string error_message = 2;
+}
