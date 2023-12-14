@@ -13,7 +13,8 @@ var DB *gorm.DB
 var err error
 
 func DatabasaConnection() {
-	host := "172.17.0.2"
+	// host := "172.17.0.2"
+	host := "localhost"
 	port := "5432"
 	dbName := "hieudev"
 	dbUser := "hieudev"

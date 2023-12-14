@@ -23,6 +23,7 @@ func (a *ApartmentRepositoryImpl) CreateApartment(apartment models.Apartment) (b
 	apartment = models.Apartment{
 		ID:     uuid.NewString(),
 		Number: apartment.Number,
+		Status: models.VacantReady,
 	}
 	result := a.Db.Create(&apartment)
 	if result.Error != nil {
@@ -39,12 +40,22 @@ func (a *ApartmentRepositoryImpl) DeleteApartment(id string) (bool, error) {
 
 // GetApartment implements ApartmentRepository.
 func (a *ApartmentRepositoryImpl) GetApartment(id string) (models.Apartment, error) {
-	panic("unimplemented")
+	user := models.Apartment{}
+	result := a.Db.Where("id = ?", id).Find(&user)
+	if result.Error != nil {
+		return user, result.Error
+	}
+	return user, nil
 }
 
 // UpdateApartment implements ApartmentRepository.
 func (a *ApartmentRepositoryImpl) UpdateApartment(apartment models.Apartment) (bool, error) {
-	panic("unimplemented")
+	id := apartment.ID
+	result := a.Db.Model(&models.Apartment{}).Select("status").Where("id = ?", id).Updates(apartment)
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return true, nil
 }
 
 func NewApartmentRepositoryImpl(db *gorm.DB) ApartmentRepository {

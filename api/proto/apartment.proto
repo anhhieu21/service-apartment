@@ -27,13 +27,14 @@ message Customer{
 message Apartment {
     string id = 1;
     string number = 2;
+    string status = 3;
 }
 
 message GetApartmentRequest {
     string id = 1;
 }
 message GetApartmentResponse {
-    string id = 1;
+    Apartment apartment = 1;
 }
 message CreateApartmentRequest {
     Apartment apartment = 1;

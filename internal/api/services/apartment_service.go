@@ -29,12 +29,14 @@ func (a *ApartmentServiceImpl) DeleteApartment(id string) (bool, error) {
 
 // GetApartment implements ApartmentService.
 func (a *ApartmentServiceImpl) GetApartment(id string) (models.Apartment, error) {
-	panic("unimplemented")
+	result, err := a.AparmentRepo.GetApartment(id)
+	return result, err
 }
 
 // UpdateApartment implements ApartmentService.
 func (a *ApartmentServiceImpl) UpdateApartment(apartment models.Apartment) (bool, error) {
-	panic("unimplemented")
+	result, err := a.AparmentRepo.UpdateApartment(apartment)
+	return result, err
 }
 
 func NewApartmentServiceImpl(repo repository.ApartmentRepository) ApartmentService {
