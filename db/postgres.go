@@ -28,6 +28,7 @@ func DatabasaConnection() {
 
 	DB, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
 	DB.AutoMigrate(models.Apartment{})
+	DB.AutoMigrate(models.Admin{})
 	DB.AutoMigrate(models.Customer{})
 	if err != nil {
 		log.Fatal("Error connectiong to the database...", err)

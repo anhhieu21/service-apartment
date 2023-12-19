@@ -13,8 +13,10 @@ service ApartmentService {
     rpc DeleteApartment (DeleteApartmentRequest) returns (DeleteApartmentResponse){}
 }
 service CustomerService {
+    rpc Login(LoginRequest) returns (LoginResponse) {}
     rpc GetCustomer (GetCustomerRequest) returns (GetCustomerResponse){}
-    rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse){}
+    rpc FindMe (FindMeRequest) returns (FindMeResponse){}
+    rpc Register (RegisterRequest) returns (RegisterResponse){}
     rpc UpdateCustomer (UpdateCustomerRequest) returns (UpdateCustomerResponse){}
     rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse){}
 }
@@ -22,6 +24,7 @@ message Customer{
     string id = 1;
     string name = 2;
     string phone = 4;
+    string password = 5;
 }
 
 message Apartment {
@@ -65,15 +68,20 @@ message GetCustomerRequest {
 message GetCustomerResponse {
     string id = 1;
 }
-message CreateCustomerRequest {
-    Customer apartment = 1;
+message FindMeRequest {
 }
-message CreateCustomerResponse {
+message FindMeResponse {
+    Customer customer = 1;
+}
+message RegisterRequest {
+    Customer customer = 1;
+}
+message RegisterResponse {
     bool success = 1;
     string error_message = 2;
 }
 message UpdateCustomerRequest {
-    Customer apartment = 1;
+    Customer customer = 1;
 }
 message UpdateCustomerResponse {
     bool success = 1;
@@ -86,3 +94,15 @@ message DeleteCustomerResponse {
     bool success = 1;
     string error_message = 2;
 }
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+  }
+  
+  message LoginResponse {
+    bool success = 1;
+    string access_token = 2;
+    string refresh_token = 3;
+    int64 expired_token = 4;
+  }

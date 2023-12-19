@@ -33,8 +33,13 @@ func main() {
 	apartmentRepoImpl := repository.NewApartmentRepositoryImpl(db.DB)
 	apartmentServiceImpl := services.NewApartmentServiceImpl(apartmentRepoImpl)
 	apartmentHandler := handlers.NewApartment(apartmentServiceImpl)
+
+	customerRepoImpl := repository.NewCustomerRepositoryImpl(db.DB)
+	customerServiceImpl := services.NewCustomerServiceImpl(customerRepoImpl)
+	customerHandler := handlers.NewCustomerHandler(customerServiceImpl)
 	s := grpc.NewServer()
 	pb.RegisterApartmentServiceServer(s, apartmentHandler)
+	pb.RegisterCustomerServiceServer(s, customerHandler)
 
 	log.Printf("Server listening at %v", lis.Addr())
 
