@@ -5,6 +5,7 @@ import (
 	"apartment/internal/models"
 	"apartment/internal/utils"
 	"apartment/pb"
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,10 +16,28 @@ import (
 type CustomerService interface {
 	Login(username, passowrd string) (*pb.LoginResponse, error)
 	Register(customer models.Customer) (*pb.RegisterResponse, error)
+	GetCustomer(ctx context.Context) *pb.FindMeResponse
 }
 
 type CustomerServiceImpl struct {
 	CustomerRepo repository.CustomerRepository
+}
+
+// GetCustomer implements CustomerService.
+func (c *CustomerServiceImpl) GetCustomer(ctx context.Context) *pb.FindMeResponse {
+	id, err := utils.GetCustomerIdFromContext(ctx)
+	if err != nil{
+		return &pb.FindMeResponse{}
+	}
+	customer := c.CustomerRepo.GetUserById(id)
+	
+	return &pb.FindMeResponse{
+		Customer: &pb.Customer{
+			Id:    customer.ID,
+			Name:  customer.Name,
+			Phone: customer.Phone,
+		},
+	}
 }
 
 // Register implements CustomerService.

@@ -1,9 +1,16 @@
 package utils
 
 import (
+	"context"
+	"fmt"
+	"strings"
+
 	jwt "github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/metadata"
 )
+
+const SECRET = "Ylmv9buRUxcrKVwwfMZ4KuWOZVvtjoWB"
 
 func GenerateAccessToken(id string, expiresAt int64) (string, error) {
 	// header := map[string]interface{}{
@@ -17,7 +24,7 @@ func GenerateAccessToken(id string, expiresAt int64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims(payload))
 
-	secret := []byte("Ylmv9buRUxcrKVwwfMZ4KuWOZVvtjoWB")
+	secret := []byte(SECRET)
 	tokenString, err := token.SignedString(secret)
 
 	if err != nil {
@@ -58,4 +65,31 @@ func HashPassword(password string) string {
 
 func CompareHashAndPassword(hash, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+}
+
+func GetCustomerIdFromContext(ctx context.Context) (string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+
+		return "", fmt.Errorf("metadata is not provided")
+	}
+
+	values := md["authorization"]
+
+	if len(values) == 0 {
+
+		return "", fmt.Errorf("authorization token is not provided")
+	}
+	accessToken := values[0]
+	accessToken = strings.TrimPrefix(accessToken, "Bearer ")
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SECRET), nil
+	})
+	if err != nil {
+
+		return "", err
+	}
+	//get claims
+	claims := token.Claims.(jwt.MapClaims)
+	return claims["id"].(string), nil
 }

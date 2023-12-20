@@ -21,7 +21,7 @@ type CustomerRepositoryImpl struct {
 // GetUserById implements CustomerRepository.
 func (c *CustomerRepositoryImpl) GetUserById(id string) *models.Customer {
 	customer := models.Customer{}
-	result := c.Db.Where("id = ?", id).First(customer)
+	result := c.Db.Where("id = ?", id).First(&customer)
 	if result.Error != nil {
 		return nil
 	}

@@ -18,8 +18,8 @@ func NewCustomerHandler(customerService services.CustomerService) *CustomerHandl
 
 func (c *CustomerHandler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	customer := models.Customer{
-		Name:  req.Customer.GetName(),
-		Phone: req.Customer.GetPhone(),
+		Name:     req.Customer.GetName(),
+		Phone:    req.Customer.GetPhone(),
 		Passowrd: req.Customer.GetPassword(),
 	}
 	result, err := c.customerService.Register(customer)
@@ -39,7 +39,7 @@ func (c *CustomerHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.
 func (c *CustomerHandler) UpdateCustomer(ctx context.Context, req *pb.UpdateCustomerRequest) (*pb.UpdateCustomerResponse, error) {
 	panic("xxxx")
 }
-func (c *CustomerHandler) FindMe(ctx context.Context, req *pb.FindMeRequest) (*pb.FindMeResponse, error){
-	
-	return &pb.FindMeResponse{},nil
+func (c *CustomerHandler) FindMe(ctx context.Context, req *pb.FindMeRequest) (*pb.FindMeResponse, error) {
+	customer := c.customerService.GetCustomer(ctx)
+	return customer, nil
 }
