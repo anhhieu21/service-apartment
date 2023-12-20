@@ -2,13 +2,10 @@ package repository
 
 import (
 	"apartment/internal/models"
-	"apartment/pb"
-
 	"gorm.io/gorm"
 )
 
 type CustomerRepository interface {
-	Login(username, password string) (pb.LoginResponse, error)
 	GetUserByName(username string) *models.Customer
 	GetUserById(id string) *models.Customer
 	CreateCustomer(customer models.Customer) (bool, error)
@@ -45,11 +42,6 @@ func (c *CustomerRepositoryImpl) GetUserByName(username string) *models.Customer
 		return nil
 	}
 	return &customer
-}
-
-// Login implements CustomerRepository.
-func (*CustomerRepositoryImpl) Login(username string, password string) (pb.LoginResponse, error) {
-	return pb.LoginResponse{}, nil
 }
 
 func NewCustomerRepositoryImpl(db *gorm.DB) CustomerRepository {
