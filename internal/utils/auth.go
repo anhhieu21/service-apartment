@@ -86,10 +86,25 @@ func GetCustomerIdFromContext(ctx context.Context) (string, error) {
 		return []byte(SECRET), nil
 	})
 	if err != nil {
-
 		return "", err
 	}
 	//get claims
 	claims := token.Claims.(jwt.MapClaims)
 	return claims["id"].(string), nil
+}
+
+func Verify(accessToken string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SECRET), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("invalid token: %w", err)
+	}
+	//get claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	return claims, nil
 }

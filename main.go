@@ -5,6 +5,7 @@ import (
 	"apartment/internal/api/handlers"
 	"apartment/internal/api/repository"
 	"apartment/internal/api/services"
+	"apartment/internal/middleware"
 	"apartment/pb"
 	"flag"
 	"fmt"
@@ -29,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-
+	interceptor := middleware.NewAuthInterceptor([]string{"/proto.CustomerService/FindMe"})
 	apartmentRepoImpl := repository.NewApartmentRepositoryImpl(db.DB)
 	apartmentServiceImpl := services.NewApartmentServiceImpl(apartmentRepoImpl)
 	apartmentHandler := handlers.NewApartment(apartmentServiceImpl)
@@ -37,7 +38,8 @@ func main() {
 	customerRepoImpl := repository.NewCustomerRepositoryImpl(db.DB)
 	customerServiceImpl := services.NewCustomerServiceImpl(customerRepoImpl)
 	customerHandler := handlers.NewCustomerHandler(customerServiceImpl)
-	s := grpc.NewServer()
+
+	s := grpc.NewServer(grpc.UnaryInterceptor(interceptor.Unary()))
 	pb.RegisterApartmentServiceServer(s, apartmentHandler)
 	pb.RegisterCustomerServiceServer(s, customerHandler)
 
