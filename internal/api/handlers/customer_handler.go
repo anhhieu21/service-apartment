@@ -43,3 +43,17 @@ func (c *CustomerHandler) FindMe(ctx context.Context, req *pb.FindMeRequest) (*p
 	customer := c.customerService.GetCustomer(ctx)
 	return customer, nil
 }
+
+func (c *CustomerHandler) GetApartment(ctx context.Context, req *pb.GetApartmentRequest) (*pb.GetApartmentResponse, error) {
+	result, err := c.customerService.GetApartment(req.GetId())
+
+	return &pb.GetApartmentResponse{
+		Apartment: result,
+	}, err
+}
+func (c *CustomerHandler) GetApartments(ctx context.Context, req *pb.GetApartmentsRequest) (*pb.GetApartmentsResponse, error) {
+	result, err := c.customerService.GetApartments()
+	return &pb.GetApartmentsResponse{
+		Apartments: result,
+	}, err
+}

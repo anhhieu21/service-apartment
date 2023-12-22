@@ -19,7 +19,10 @@ service CustomerService {
     rpc Register (RegisterRequest) returns (RegisterResponse){}
     rpc UpdateCustomer (UpdateCustomerRequest) returns (UpdateCustomerResponse){}
     rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse){}
+    rpc GetApartment (GetApartmentRequest) returns (GetApartmentResponse){}
+    rpc GetApartments (GetApartmentsRequest) returns (GetApartmentsResponse){}
 }
+
 message Customer{
     string id = 1;
     string name = 2;
@@ -33,6 +36,10 @@ message Apartment {
     string status = 3;
 }
 
+message GetApartmentsRequest{}
+message GetApartmentsResponse{
+    repeated Apartment apartments = 1;
+}
 message GetApartmentRequest {
     string id = 1;
 }
@@ -61,7 +68,7 @@ message DeleteApartmentResponse {
     string error_message = 2;
 }
 
-
+// Customer
 message GetCustomerRequest {
     string id = 1;
 }
@@ -100,9 +107,9 @@ message LoginRequest {
     string password = 2;
   }
   
-  message LoginResponse {
+message LoginResponse {
     bool success = 1;
     string access_token = 2;
     string refresh_token = 3;
     int64 expired_token = 4;
-  }
+}

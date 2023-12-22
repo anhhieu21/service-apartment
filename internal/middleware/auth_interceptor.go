@@ -4,6 +4,7 @@ import (
 	"apartment/internal/utils"
 	"context"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -34,7 +35,7 @@ func (interceptor *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 		if !interceptor.isAllowedMethod(info.FullMethod) {
 			return handler(ctx, req)
 		}
-
+ 
 		err := interceptor.authorize(ctx, info.FullMethod)
 		if err != nil {
 			return nil, err
@@ -61,15 +62,22 @@ func (interceptor *AuthInterceptor) authorize(ctx context.Context, method string
 	if len(values) == 0 {
 		return status.Errorf(codes.Unauthenticated, "authorization token is not provided")
 	}
+	now := time.Now()
 	accessToken := values[0]
 	claims, err := utils.Verify(accessToken)
 	if err != nil {
 		return status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
 	}
 
-	if claims == nil {
-		return status.Error(codes.PermissionDenied, "no permission to access this RPC")
+	// if claims == nil {
+	// 	return status.Error(codes.PermissionDenied, "no permission to access this RPC")
+	// }
+	exp := claims["exp"].(int64)
+	expired_token := time.Unix(0, exp)
+	if now.After(expired_token) {
+		return status.Errorf(codes.Unauthenticated, "token expired")
 	}
+
 	// for _, role := range accessibleRoles {
 	// 	if role == cla {
 

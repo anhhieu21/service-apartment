@@ -6,6 +6,7 @@ import (
 	"apartment/internal/utils"
 	"apartment/pb"
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,20 +18,54 @@ type CustomerService interface {
 	Login(username, passowrd string) (*pb.LoginResponse, error)
 	Register(customer models.Customer) (*pb.RegisterResponse, error)
 	GetCustomer(ctx context.Context) *pb.FindMeResponse
+	GetApartment(id string) (*pb.Apartment, error)
+	GetApartments() ([]*pb.Apartment, error)
 }
 
 type CustomerServiceImpl struct {
 	CustomerRepo repository.CustomerRepository
 }
 
+// GetApartment implements CustomerService.
+func (c *CustomerServiceImpl) GetApartment(id string) (*pb.Apartment, error) {
+	result := c.CustomerRepo.GetApartment(id)
+	if result == nil {
+		return nil, fmt.Errorf("not found apartment")
+	}
+	return &pb.Apartment{
+		Id:     result.ID,
+		Number: result.Number,
+		Status: string(result.Status),
+	}, nil
+}
+
+// GetApartments implements CustomerService.
+func (c *CustomerServiceImpl) GetApartments() ([]*pb.Apartment, error) {
+	var apartments []*pb.Apartment
+	result := c.CustomerRepo.GetApartments()
+	if result == nil {
+		return nil, fmt.Errorf("not found apartments")
+	}
+	for _, e := range *result {
+		apartment := &pb.Apartment{
+			Id:     e.ID,
+			Number: e.Number,
+			Status: string(e.Status),
+		}
+		apartments = append(apartments, apartment)
+	}
+
+	return apartments, nil
+}
+
 // GetCustomer implements CustomerService.
 func (c *CustomerServiceImpl) GetCustomer(ctx context.Context) *pb.FindMeResponse {
 	id, err := utils.GetCustomerIdFromContext(ctx)
-	if err != nil{
+	if err != nil {
 		return &pb.FindMeResponse{}
 	}
 	customer := c.CustomerRepo.GetUserById(id)
-	
+
 	return &pb.FindMeResponse{
 		Customer: &pb.Customer{
 			Id:    customer.ID,
